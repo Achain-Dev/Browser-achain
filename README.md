@@ -7,7 +7,10 @@ Official golang implementation of the browser achain
 
 ## Dependencies
 
- * go get github.com/astaxie/beego
+ * go get github.com/gin-gonic/gin
  * go get github.com/go-sql-driver/mysql
+ * go get github.com/robfig/config
+ * go get github.com/Masterminds/glide 
+
 
 
