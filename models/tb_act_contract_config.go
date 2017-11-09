@@ -1,7 +1,7 @@
 package models
 
 import (
-	"Browser-achain/util"
+	"Browser-achain/common"
 	"log"
 )
 
@@ -18,7 +18,7 @@ type TbActContractConfig struct {
 
 // list all urls by contract id
 func ListUrlsByContractId(contractId string) ([]TbActContractConfig, error) {
-	db, err := util.GetDbConnection()
+	db, err := common.GetDbConnection()
 
 	if err != nil {
 		log.Fatal("ListUrlsByContractId|ERROR:", err)
