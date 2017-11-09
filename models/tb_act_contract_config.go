@@ -7,11 +7,11 @@ import (
 
 type TbActContractConfig struct {
 	Id           int    `orm:"column(id);auto"`
-	ContractId   string `orm:"column(contract_id);size(100);not null" description:"合约id"`
-	ContractName string `orm:"column(contract_name);size(255)" description:"合约名称"`
-	UrlIndex     int    `orm:"column(url_index)" description:"url代表的含义"`
-	Url          string `orm:"column(url);size(255);not null" description:"url地址"`
-	UrlName      string `orm:"column(url_name);size(32);not null" description:"url名称"`
+	ContractId   string `orm:"column(contract_id);size(100);not null" description:"contract id"`
+	ContractName string `orm:"column(contract_name);size(255)" description:"contract name"`
+	UrlIndex     int    `orm:"column(url_index)" description:"the meaning of the url"`
+	Url          string `orm:"column(url);size(255);not null" description:"address of the url"`
+	UrlName      string `orm:"column(url_name);size(32);not null" description:"the name of url"`
 	CreateTime   string `orm:"column(create_time);type(timestamp);auto_now"`
 	UpdateTime   string `orm:"column(update_time);type(timestamp)"`
 }
