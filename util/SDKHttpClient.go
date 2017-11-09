@@ -1,39 +1,35 @@
 package util
 
 import (
-	"net/http"
-	"strings"
-	"math/rand"
-	"time"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
+	"net/http"
 	"strconv"
-	"encoding/base64"
+	"strings"
+	"time"
 )
 
 type postData struct {
 	Method  string
 	Id      string
-	Jsonrpc string
+	JsonRpc string
 	Params  []string
 }
 
 func Post(url string, key string, method string, params []string) string {
-	/*
-	构造rpc传递json
-	 */
+	// Construct RPC to deliver json
 	data := postData{
 		Method:  method,
 		Id:      strconv.Itoa(getRandomNumber()),
-		Jsonrpc: "2.0",
+		JsonRpc: "2.0",
 		Params:  params,
 	}
 	postData := PostDataToString(data)
 
-	/*
-	处理json中出现null的问题
-	 */
+	// Handle the problem of null in json
 	if len(data.Params) == 0 {
 		postData = strings.Replace(postData, "null", "[]", -1)
 	}
@@ -52,12 +48,12 @@ func Post(url string, key string, method string, params []string) string {
 	req.Header.Set("Content-type", "application/json;charset=UTF-8")
 	req.Header.Set("Authorization", rpcAuth)
 
-	fmt.Println("【SDKHttpClient】｜POST开始：url=", url)
+	fmt.Println("【SDKHttpClient】｜POST begin：url=", url)
 	resp, err := client.Do(req)
-	fmt.Println("【SDKHttpClient】｜POST开始 URL:[{", url, "}][method={", method, "}][jsonArray={", params, "}],响应结果[response={", resp, "}]!")
+	fmt.Println("【SDKHttpClient】｜POST begin URL:[{", url, "}][method={", method, "}][jsonArray={", params, "}],reponse result[response={", resp, "}]!")
 	if err != nil {
 		panic("error get response")
-		fmt.Println("【SDKHttpClient】｜POST URL:", url, "响应结果[{}]!", resp.StatusCode)
+		fmt.Println("【SDKHttpClient】｜POST URL:", url, "reponse result[{}]!", resp.StatusCode)
 		return ""
 	}
 	if resp.StatusCode == http.StatusOK {
@@ -66,11 +62,11 @@ func Post(url string, key string, method string, params []string) string {
 			panic("error get response body")
 			return ""
 		}
-		fmt.Println("【SDKHttpClient】｜响应结果：{", resp.StatusCode, "},[{", string(body), "}]")
+		fmt.Println("【SDKHttpClient】｜reponse result：{", resp.StatusCode, "},[{", string(body), "}]")
 		resp.Body.Close()
 		return string(body)
 	} else {
-		fmt.Println("【SDKHttpClient】｜POST URL:[{", url, "}],响应结果[{", resp.StatusCode, "}]!")
+		fmt.Println("【SDKHttpClient】｜POST URL:[{", url, "}],reponse result[{", resp.StatusCode, "}]!")
 		return ""
 	}
 }
