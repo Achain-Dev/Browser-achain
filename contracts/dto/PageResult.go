@@ -30,7 +30,7 @@ func (p PageResult) NewPageResult(list []interface{}, totalRecords int) {
 
 func (p PageResult) SetPageResult(totalRecords int, dataList []interface{}) {
 	if totalRecords < 0 {
-		panic(errors.New("总记录数不能小于0"))
+		panic(errors.New("the total number of records cannot be less than 0"))
 		return
 	}
 	p.TotalRecords = totalRecords

@@ -1,9 +1,9 @@
 package main
 
-
+import "Browser-achain/blockchain"
 
 func main() {
 	// load API
-	initRouter()
+	blockchain.InitRouter()
 
 }

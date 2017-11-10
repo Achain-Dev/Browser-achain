@@ -1,8 +1,8 @@
 package util
 
 import (
-	"strconv"
 	"time"
+	"strconv"
 )
 
 func GetTimeAddEight(date time.Time) time.Time {
@@ -10,12 +10,12 @@ func GetTimeAddEight(date time.Time) time.Time {
 }
 
 // calculate actual amount
-func GetActualAmount(amount *int64) float64 {
-	amountString := "0"
-	if amount != nil {
-		amountString = strconv.FormatInt(*amount, 64)
+func GetActualAmount(amount *int64) string {
+
+	if amount == nil || *amount == int64(0) {
+		return "0"
 	}
-	amountFloat, _ := strconv.ParseFloat(amountString, 64)
-	actualAmount := amountFloat / float64(100000)
-	return actualAmount
+	actualAmount := float64(*amount) / float64(100000)
+	return strconv.FormatFloat(actualAmount, 'E', -1, 32)
+
 }
