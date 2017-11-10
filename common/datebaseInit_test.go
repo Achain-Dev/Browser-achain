@@ -1,19 +1,17 @@
-package util
+package common
 
 import (
-	"testing"
 	"errors"
 	"fmt"
-
+	"testing"
 )
 
 func TestGetDbConnection(t *testing.T) {
 	db, err := GetDbConnection()
 
-	if err != nil{
+	if err != nil {
 		errors.New("get  connection fail")
 	}
 
 	fmt.Println(db)
 }
-
