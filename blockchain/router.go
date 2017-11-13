@@ -12,6 +12,7 @@ func InitRouter() {
 	actBrowser := router.Group("/api/browser/act")
 	{
 		actBrowser.GET("/contract/balance/query/:address", service.QueryBalanceByAddress)
+		actBrowser.GET("/contract/query/:page/:perPage",service.QueryContractByKey)
 	}
 
 	//act wallet http
