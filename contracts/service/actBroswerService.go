@@ -8,6 +8,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
 )
 
 type UserBalanceVo struct {
@@ -96,3 +97,23 @@ func QueryContractByKey(c *gin.Context) {
 	contractInfoPageVO.ContractInfoVOList = contractInfoVOList
 	common.WebResultSuccess(contractInfoPageVO, c)
 }
+
+// Query the act address account information
+func QueryAddressInfo(c *gin.Context)  {
+	userActAddress := c.Param("userAddress")
+	userAddressList, err := models.ListByAddressAndCoinType(userActAddress, "ACT")
+	if err != nil {
+		common.WebResultFail(c)
+	}
+	var userAddressVO models.UserAddressVO
+
+	if len(userAddressList) > 0{
+		tbUserAddress := userAddressList[0]
+		actualAmount := util.GetActualAmount(tbUserAddress.Balance)
+		userAddressVO.Balance = actualAmount
+		userAddressVO.Address = *tbUserAddress.UserAddress
+	}
+	common.WebResultSuccess(userAddressVO, c)
+}
+
+
