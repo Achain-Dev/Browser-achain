@@ -16,6 +16,5 @@ func GetActualAmount(amount *int64) string {
 		return "0"
 	}
 	actualAmount := float64(*amount) / float64(100000)
-	return strconv.FormatFloat(actualAmount, 'E', -1, 32)
-
+	return strconv.FormatFloat(actualAmount, 'f', -1, 32)
 }
