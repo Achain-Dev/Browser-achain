@@ -116,4 +116,45 @@ func QueryAddressInfo(c *gin.Context)  {
 	common.WebResultSuccess(userAddressVO, c)
 }
 
+// Query transactions by address and block number
+func TransactionListQuery(c *gin.Context)  {
+	userActAddress := c.Param("userAddress")
+	start, _ := strconv.ParseInt(c.Param("start"), 10, 64)
+
+	tbActTransactionList,err := models.TransactionListQuery(start,userActAddress,"ACT")
+	if err != nil {
+		common.WebResultFail(c)
+	}
+
+	if len(tbActTransactionList) == 0 {
+		common.WebResultMiss(c,10002,"no more transactions")
+	}
+
+	actTransactionDTOList := make([]models.ActTransactionDTO, 0)
+
+	for _,tbActTransaction :=range tbActTransactionList {
+		var actTransactionDTO models.ActTransactionDTO
+		actTransactionDTO.Id = tbActTransaction.Id
+		actTransactionDTO.TrxId = tbActTransaction.TrxId
+		actTransactionDTO.FromAcct = tbActTransaction.FromAcct
+		actTransactionDTO.FromAddr = tbActTransaction.FromAddr
+		actTransactionDTO.ToAcct = tbActTransaction.ToAcct
+		actTransactionDTO.ToAddr = tbActTransaction.ToAddr
+		actTransactionDTO.CalledAbi = tbActTransaction.CalledAbi
+		actTransactionDTO.TrxType = strconv.Itoa(tbActTransaction.TrxType)
+		actTransactionDTO.Amount = util.GetActualAmount(tbActTransaction.Amount)
+		actTransactionDTO.TrxTime = tbActTransaction.TrxTime
+		actTransactionDTO.IsCompleted = strconv.FormatUint(uint64(tbActTransaction.IsCompleted),10)
+		actTransactionDTO.SubAddr = tbActTransaction.SubAddress
+		actTransactionDTO.CoinType = tbActTransaction.CoinType
+		actTransactionDTO.BlockNum = tbActTransaction.BlockNum
+		actTransactionDTOList = append(actTransactionDTOList,actTransactionDTO)
+	}
+
+	actTransactionVO := models.ActTransactionVO{Data: actTransactionDTOList, EndBlockNum: actTransactionDTOList[len(actTransactionDTOList)-1].BlockNum}
+	common.WebResultSuccess(actTransactionVO, c)
+}
+
+
+
 
