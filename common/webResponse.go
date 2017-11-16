@@ -17,3 +17,8 @@ func WebResultMiss(c *gin.Context,code int,msg string)  {
 func WebResultSuccess(data interface{},c *gin.Context)  {
 	c.JSON(http.StatusOK, gin.H{"data": data,"code":200,"msg":"success"})
 }
+
+func WebResultSuccessWithMap(c *gin.Context,data map[string]interface{}) {
+	c.JSON(http.StatusOK, data)
+}
+

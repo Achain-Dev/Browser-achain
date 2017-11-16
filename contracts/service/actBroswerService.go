@@ -8,7 +8,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-
 )
 
 type UserBalanceVo struct {
@@ -18,7 +17,7 @@ type UserBalanceVo struct {
 
 const coinType = "ACT"
 const contractLength = 30
-const CONTARCT_PREFIX = "CON"
+const CONTRACT_PREFIX = "CON"
 
 // Check the balance of all currencies in the address according to the address
 func QueryBalanceByAddress(c *gin.Context) {
@@ -68,7 +67,7 @@ func QueryContractByKey(c *gin.Context) {
 
 	queryType := 1
 	// keyword is not empty and keyword startWith CONN and the length of keyword greater than 30
-	if keyword != "" && strings.Index(keyword, CONTARCT_PREFIX) == 0 && len(keyword) > 30 {
+	if keyword != "" && strings.Index(keyword, CONTRACT_PREFIX) == 0 && len(keyword) > 30 {
 		queryType = 0
 	}
 	contractInfoPageVO, err := models.ListContractInfoByKey(keyword, models.Forever, page, perPage, queryType)
@@ -99,7 +98,7 @@ func QueryContractByKey(c *gin.Context) {
 }
 
 // Query the act address account information
-func QueryAddressInfo(c *gin.Context)  {
+func QueryAddressInfo(c *gin.Context) {
 	userActAddress := c.Param("userAddress")
 	userAddressList, err := models.ListByAddressAndCoinType(userActAddress, "ACT")
 	if err != nil {
@@ -107,7 +106,7 @@ func QueryAddressInfo(c *gin.Context)  {
 	}
 	var userAddressVO models.UserAddressVO
 
-	if len(userAddressList) > 0{
+	if len(userAddressList) > 0 {
 		tbUserAddress := userAddressList[0]
 		actualAmount := util.GetActualAmount(tbUserAddress.Balance)
 		userAddressVO.Balance = actualAmount
@@ -117,22 +116,22 @@ func QueryAddressInfo(c *gin.Context)  {
 }
 
 // Query transactions by address and block number
-func TransactionListQuery(c *gin.Context)  {
+func TransactionListQuery(c *gin.Context) {
 	userActAddress := c.Param("userAddress")
 	start, _ := strconv.ParseInt(c.Param("start"), 10, 64)
 
-	tbActTransactionList,err := models.TransactionListQuery(start,userActAddress,"ACT")
+	tbActTransactionList, err := models.TransactionListQuery(start, userActAddress, "ACT")
 	if err != nil {
 		common.WebResultFail(c)
 	}
 
 	if len(tbActTransactionList) == 0 {
-		common.WebResultMiss(c,10002,"no more transactions")
+		common.WebResultMiss(c, 10002, "no more transactions")
 	}
 
 	actTransactionDTOList := make([]models.ActTransactionDTO, 0)
 
-	for _,tbActTransaction :=range tbActTransactionList {
+	for _, tbActTransaction := range tbActTransactionList {
 		var actTransactionDTO models.ActTransactionDTO
 		actTransactionDTO.Id = tbActTransaction.Id
 		actTransactionDTO.TrxId = tbActTransaction.TrxId
@@ -144,17 +143,16 @@ func TransactionListQuery(c *gin.Context)  {
 		actTransactionDTO.TrxType = strconv.Itoa(tbActTransaction.TrxType)
 		actTransactionDTO.Amount = util.GetActualAmount(tbActTransaction.Amount)
 		actTransactionDTO.TrxTime = tbActTransaction.TrxTime
-		actTransactionDTO.IsCompleted = strconv.FormatUint(uint64(tbActTransaction.IsCompleted),10)
+		actTransactionDTO.IsCompleted = strconv.FormatUint(uint64(tbActTransaction.IsCompleted), 10)
 		actTransactionDTO.SubAddr = tbActTransaction.SubAddress
 		actTransactionDTO.CoinType = tbActTransaction.CoinType
 		actTransactionDTO.BlockNum = tbActTransaction.BlockNum
-		actTransactionDTOList = append(actTransactionDTOList,actTransactionDTO)
+		actTransactionDTOList = append(actTransactionDTOList, actTransactionDTO)
 	}
-
-	actTransactionVO := models.ActTransactionVO{Data: actTransactionDTOList, EndBlockNum: actTransactionDTOList[len(actTransactionDTOList)-1].BlockNum}
-	common.WebResultSuccess(actTransactionVO, c)
+	data := make(map[string]interface{}, 4)
+	data["data"] = actTransactionDTOList
+	data["code"] = 200
+	data["msg"] = "success"
+	data["endBlockNum"] = actTransactionDTOList[len(actTransactionDTOList)-1].BlockNum
+	common.WebResultSuccessWithMap(c, data)
 }
-
-
-
-
