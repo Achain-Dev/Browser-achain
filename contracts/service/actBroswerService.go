@@ -156,3 +156,15 @@ func TransactionListQuery(c *gin.Context) {
 	data["endBlockNum"] = actTransactionDTOList[len(actTransactionDTOList)-1].BlockNum
 	common.WebResultSuccessWithMap(c, data)
 }
+
+// Query by origin trx id
+func TransactionExQuery(c *gin.Context)  {
+	originTrxId := c.DefaultQuery("originTrxId", "")
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+	list, err := models.TransactionExQuery(originTrxId, page, pageSize)
+	if err != nil {
+		common.WebResultFail(c)
+	}
+	common.WebResultSuccess(list, c)
+}
