@@ -57,7 +57,6 @@ type ActTransactionDTO struct {
 
 type ActTransactionVO struct {
 	Data []ActTransactionDTO
-	Msg string
 	EndBlockNum int64
 
 }
