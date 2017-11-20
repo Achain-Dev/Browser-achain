@@ -16,6 +16,7 @@ func InitRouter() {
 		actBrowser.GET("/getUserAddressBalance/:userAddress",service.QueryAddressInfo)
 		actBrowser.GET("/transactionQuery/:userAddress/:start",service.TransactionListQuery)
 		actBrowser.GET("/TransactionEx/Query/:page/:pageSize",service.TransactionExQuery)
+		actBrowser.GET("/blockMaxNum/query",service.QueryBlockMaxNumber)
 	}
 
 	//act wallet http
