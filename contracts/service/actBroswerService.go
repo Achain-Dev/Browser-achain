@@ -8,6 +8,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"github.com/grafana/grafana/pkg/components/simplejson"
+	"fmt"
 )
 
 type UserBalanceVo struct {
@@ -167,4 +169,20 @@ func TransactionExQuery(c *gin.Context)  {
 		common.WebResultFail(c)
 	}
 	common.WebResultSuccess(list, c)
+}
+// block max number query
+func QueryBlockMaxNumber(c *gin.Context)  {
+	var params = []string{}
+	result := util.Post(common.WALLET_RPC, common.WALLET_NAME_PASSWORD, "blockchain_get_block_count", params)
+	var blockNum = int64(0)
+	if result != "" {
+		resultJson, err := simplejson.NewJson([]byte(result))
+		if err != nil {
+			panic(err.Error())
+			log.Fatal("QueryBlockMaxNumber|getBlockNum|error convert json string")
+			common.WebResultFail(c)
+		}
+		blockNum = resultJson.Get("result").MustInt64()
+	}
+	common.WebResultSuccess(blockNum, c)
 }
