@@ -82,5 +82,9 @@ func PostDataToString(data interface{}) string {
 		fmt.Println("json error!")
 		return ""
 	}
-	return strings.ToLower(string(result[:]))
+	res := strings.Replace(string(result[:]), "Method", "method", 1)
+	res = strings.Replace(res, "Id", "id", 1)
+	res = strings.Replace(res, "JsonRpc", "jsonrpc", 1)
+	res = strings.Replace(res, "Params", "params", 1)
+	return res
 }
