@@ -3,7 +3,6 @@ package util
 import (
 	"Browser-achain/common"
 	"fmt"
-	"github.com/grafana/grafana/pkg/components/simplejson"
 	"testing"
 )
 

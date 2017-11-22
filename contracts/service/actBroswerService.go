@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"github.com/grafana/grafana/pkg/components/simplejson"
-	"fmt"
 )
 
 type UserBalanceVo struct {
@@ -185,4 +184,15 @@ func QueryBlockMaxNumber(c *gin.Context)  {
 		blockNum = resultJson.Get("result").MustInt64()
 	}
 	common.WebResultSuccess(blockNum, c)
+}
+
+// query block info
+func QueryBlockInfo(c *gin.Context)  {
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+	actBlockPageVO, err := models.BlockQueryByPage("", page, pageSize)
+	if err != nil {
+		common.WebResultFail(c)
+	}
+	common.WebResultSuccess(actBlockPageVO, c)
 }
