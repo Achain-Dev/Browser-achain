@@ -24,11 +24,11 @@ type TbActTransactionEx struct {
 }
 
 type ActTransactionExPage struct {
-	actTransactionExList []TbActTransactionEx
-	totalRecords int
-	totalPage int
-	currentPage int
-	pageSize int
+	ActTransactionExList []TbActTransactionEx
+	TotalRecords int
+	TotalPage int
+	CurrentPage int
+	PageSize int
 }
 
 func TransactionExQuery(originTrxId string,page,pageSize int)  (ActTransactionExPage,error) {
@@ -68,12 +68,12 @@ func TransactionExQuery(originTrxId string,page,pageSize int)  (ActTransactionEx
 	if totalRecords % pageSize == 0 {
 		totalPage = totalRecords / pageSize
 	}
-	actTransactionExPage.totalPage = totalPage
-	actTransactionExPage.currentPage = page
-	actTransactionExPage.pageSize = pageSize
-	actTransactionExPage.totalRecords = totalRecords
+	actTransactionExPage.TotalPage = totalPage
+	actTransactionExPage.CurrentPage = page
+	actTransactionExPage.PageSize = pageSize
+	actTransactionExPage.TotalRecords = totalRecords
 	tbActContractInfoList, _ := mappingDataToTransactionExList(rows)
-	actTransactionExPage.actTransactionExList = tbActContractInfoList
+	actTransactionExPage.ActTransactionExList = tbActContractInfoList
 	return actTransactionExPage,nil
 }
 

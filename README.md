@@ -13,3 +13,4 @@ Official golang implementation of the browser achain
  * go get github.com/Masterminds/glide
  * go get gopkg.in/go-playground/validator.v8
  * go get gopkg.in/yaml.v2
+ * go get github.com/garyburd/redigo/redis
