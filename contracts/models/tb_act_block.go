@@ -1,13 +1,6 @@
 package models
 
 import (
-	"errors"
-	"fmt"
-	"reflect"
-	"strings"
-	"time"
-
-	"github.com/astaxie/beego/orm"
 	"database/sql"
 	"Browser-achain/common"
 	"log"
@@ -114,6 +107,50 @@ func BlockQueryByPage(signee string,page,pageSize int) (ActBlockPageVO,error) {
 
 	actBlockPageVO.ActBlockVOList = actBlockVOList
 	return actBlockPageVO,nil
+}
+
+func BlockQueryByBlockId(blockId string) (*TbActBlock,error) {
+	db, err := common.GetDbConnection()
+
+	defer db.Close()
+
+	if err != nil {
+		log.Fatal("BlockQueryByBlockId|ERROR:", err)
+		panic(err.Error())
+	}
+
+	rows, err := db.Query("SELECT * FROM tb_act_block WHERE block_id = ? LIMIT 1", blockId)
+	if err != nil {
+		log.Fatal("BlockQueryByBlockId|ERROR:", err)
+		return nil,err
+	}
+	tbActBlockList, _ := mappingDataToBlockList(rows)
+	if len(tbActBlockList) > 0 {
+		return &tbActBlockList[0],nil
+	}
+	return nil,nil
+}
+
+func BlockQueryByBlockNum(blockNum int64) (*TbActBlock,error) {
+	db, err := common.GetDbConnection()
+
+	defer db.Close()
+
+	if err != nil {
+		log.Fatal("BlockQueryByBlockId|ERROR:", err)
+		panic(err.Error())
+	}
+
+	rows, err := db.Query("SELECT * FROM tb_act_block WHERE block_num = ? LIMIT 1", blockNum)
+	if err != nil {
+		log.Fatal("BlockQueryByBlockId|ERROR:", err)
+		return nil,err
+	}
+	tbActBlockList, _ := mappingDataToBlockList(rows)
+	if len(tbActBlockList) > 0 {
+		return &tbActBlockList[0],nil
+	}
+	return nil,nil
 }
 
 
