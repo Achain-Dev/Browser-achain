@@ -28,6 +28,8 @@ type ActService interface {
 	QueryBlockInfo(c *gin.Context)
 	// Query block info by block id ,or block number
 	QueryBlockInfoByBlockIdOrNum(c *gin.Context)
+	// Query block info by signee
+	QueryBlockAgent(c *gin.Context)
 
 }
 
@@ -226,8 +228,8 @@ func (_ *ActBrowserService) QueryBlockInfo(c *gin.Context)  {
 }
 
 func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context)  {
-	blockId := c.Param("blockId")
-	blockNum := c.Param("blockNum")
+	blockId := c.DefaultQuery("blockId","")
+	blockNum := c.DefaultQuery("blockNum","")
 
 	if blockId == "" && blockNum == "" {
 		common.WebResultMiss(c,10007,"param missing")
@@ -265,6 +267,23 @@ func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context)  {
 		resultMap["block_time"] = tbActBlock.BlockTime
 	}
 	common.WebResultSuccess(resultMap, c)
+}
+
+func (_ *ActBrowserService) QueryBlockAgent(c *gin.Context)()  {
+
+	signee := c.DefaultQuery("signee","")
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+
+	if page < 1 || pageSize < 1 {
+		common.WebResultFail(c)
+	}
+	actBlockPageVO, err := models.BlockQueryByPage(signee, page, pageSize)
+	if err != nil {
+		common.WebResultFail(c)
+	}
+
+	common.WebResultSuccess(actBlockPageVO, c)
 }
 
 

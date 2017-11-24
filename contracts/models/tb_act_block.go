@@ -154,6 +154,8 @@ func BlockQueryByBlockNum(blockNum int64) (*TbActBlock,error) {
 }
 
 
+
+
 func mappingDataToBlockList(rows *sql.Rows) ([]TbActBlock,error)  {
 	tbActBlockList := make([]TbActBlock, 0)
 	for rows.Next() {
