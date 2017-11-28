@@ -5,10 +5,10 @@ import (
 	"Browser-achain/contracts/models"
 	"Browser-achain/util"
 	"github.com/gin-gonic/gin"
+	"github.com/grafana/grafana/pkg/components/simplejson"
 	"log"
 	"strconv"
 	"strings"
-	"github.com/grafana/grafana/pkg/components/simplejson"
 )
 
 type ActService interface {
@@ -28,7 +28,10 @@ type ActService interface {
 	QueryBlockInfo(c *gin.Context)
 	// Query block info by block id ,or block number
 	QueryBlockInfoByBlockIdOrNum(c *gin.Context)
-
+	// Query block info by signee
+	QueryBlockAgent(c *gin.Context)
+	// Statistical home related information
+	StatisticsTransaction(c *gin.Context)
 }
 
 type ActServiceTemplate struct {
@@ -36,7 +39,6 @@ type ActServiceTemplate struct {
 }
 
 type ActBrowserService struct {
-
 }
 
 type UserBalanceVo struct {
@@ -45,9 +47,7 @@ type UserBalanceVo struct {
 }
 
 const coinType = "ACT"
-const contractLength = 30
 const CONTRACT_PREFIX = "CON"
-
 
 func (_ *ActBrowserService) QueryBalanceByAddress(c *gin.Context) {
 	address := c.Param("address")
@@ -83,7 +83,6 @@ func (_ *ActBrowserService) QueryBalanceByAddress(c *gin.Context) {
 	}
 	common.WebResultSuccess(userBalanceVoList, c)
 }
-
 
 func (_ *ActBrowserService) QueryContractByKey(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -126,7 +125,6 @@ func (_ *ActBrowserService) QueryContractByKey(c *gin.Context) {
 	common.WebResultSuccess(contractInfoPageVO, c)
 }
 
-
 func (_ *ActBrowserService) QueryAddressInfo(c *gin.Context) {
 	userActAddress := c.Param("userAddress")
 	userAddressList, err := models.ListByAddressAndCoinType(userActAddress, "ACT")
@@ -143,7 +141,6 @@ func (_ *ActBrowserService) QueryAddressInfo(c *gin.Context) {
 	}
 	common.WebResultSuccess(userAddressVO, c)
 }
-
 
 func (_ *ActBrowserService) TransactionListQuery(c *gin.Context) {
 	userActAddress := c.Param("userAddress")
@@ -186,8 +183,7 @@ func (_ *ActBrowserService) TransactionListQuery(c *gin.Context) {
 	common.WebResultSuccessWithMap(c, data)
 }
 
-
-func (_ *ActBrowserService) TransactionExQuery(c *gin.Context)  {
+func (_ *ActBrowserService) TransactionExQuery(c *gin.Context) {
 	originTrxId := c.DefaultQuery("originTrxId", "")
 	page, _ := strconv.Atoi(c.Param("page"))
 	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
@@ -198,7 +194,7 @@ func (_ *ActBrowserService) TransactionExQuery(c *gin.Context)  {
 	common.WebResultSuccess(list, c)
 }
 
-func (_ *ActBrowserService) QueryBlockMaxNumber(c *gin.Context)  {
+func (_ *ActBrowserService) QueryBlockMaxNumber(c *gin.Context) {
 	var params = []string{}
 	result := util.Post(common.WALLET_RPC, common.WALLET_NAME_PASSWORD, "blockchain_get_block_count", params)
 	var blockNum = int64(0)
@@ -214,8 +210,7 @@ func (_ *ActBrowserService) QueryBlockMaxNumber(c *gin.Context)  {
 	common.WebResultSuccess(blockNum, c)
 }
 
-
-func (_ *ActBrowserService) QueryBlockInfo(c *gin.Context)  {
+func (_ *ActBrowserService) QueryBlockInfo(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Param("page"))
 	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
 	actBlockPageVO, err := models.BlockQueryByPage("", page, pageSize)
@@ -225,12 +220,12 @@ func (_ *ActBrowserService) QueryBlockInfo(c *gin.Context)  {
 	common.WebResultSuccess(actBlockPageVO, c)
 }
 
-func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context)  {
-	blockId := c.Param("blockId")
-	blockNum := c.Param("blockNum")
+func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context) {
+	blockId := c.DefaultQuery("blockId", "")
+	blockNum := c.DefaultQuery("blockNum", "")
 
 	if blockId == "" && blockNum == "" {
-		common.WebResultMiss(c,10007,"param missing")
+		common.WebResultMiss(c, 10007, "param missing")
 	}
 
 	var tbActBlock models.TbActBlock
@@ -239,8 +234,8 @@ func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context)  {
 		result, errTemp := models.BlockQueryByBlockId(blockId)
 		tbActBlock = *result
 		err = errTemp
-	}else {
-		num, _ := strconv.ParseInt(blockNum,10,64)
+	} else {
+		num, _ := strconv.ParseInt(blockNum, 10, 64)
 		result, errTemp := models.BlockQueryByBlockNum(num)
 		tbActBlock = *result
 		err = errTemp
@@ -267,4 +262,27 @@ func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context)  {
 	common.WebResultSuccess(resultMap, c)
 }
 
+func (_ *ActBrowserService) QueryBlockAgent(c *gin.Context) {
 
+	signee := c.DefaultQuery("signee", "")
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+
+	if page < 1 || pageSize < 1 {
+		common.WebResultFail(c)
+	}
+	actBlockPageVO, err := models.BlockQueryByPage(signee, page, pageSize)
+	if err != nil {
+		common.WebResultFail(c)
+	}
+
+	common.WebResultSuccess(actBlockPageVO, c)
+}
+
+func (_ *ActBrowserService) StatisticsTransaction(c *gin.Context) {
+	actStatisticsDto, err := models.StatisticsAllDataForQuery()
+	if err != nil {
+		common.WebResultFail(c)
+	}
+	common.WebResultSuccess(actStatisticsDto, c)
+}
