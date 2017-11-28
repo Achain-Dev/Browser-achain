@@ -14,14 +14,15 @@ func InitRouter() {
 		template := new(service.ActServiceTemplate)
 		template.Browser = new(service.ActBrowserService)
 		actBrowser.GET("/contract/balance/query/:address", template.Browser.QueryBalanceByAddress)
-		actBrowser.GET("/contract/query/:page/:perPage",template.Browser.QueryContractByKey)
-		actBrowser.GET("/getUserAddressBalance/:userAddress",template.Browser.QueryAddressInfo)
-		actBrowser.GET("/transactionQuery/:userAddress/:start",template.Browser.TransactionListQuery)
-		actBrowser.GET("/TransactionEx/Query/:page/:pageSize",template.Browser.TransactionExQuery)
-		actBrowser.GET("/blockMaxNum/query",template.Browser.QueryBlockMaxNumber)
-		actBrowser.GET("/block/query/:page/:pageSize",template.Browser.QueryBlockInfo)
-		actBrowser.GET("/block/info/query",template.Browser.QueryBlockInfoByBlockIdOrNum)
-		actBrowser.GET("/block/agent/query/:page/:pageSize",template.Browser.QueryBlockAgent)
+		actBrowser.GET("/contract/query/:page/:perPage", template.Browser.QueryContractByKey)
+		actBrowser.GET("/getUserAddressBalance/:userAddress", template.Browser.QueryAddressInfo)
+		actBrowser.GET("/transactionQuery/:userAddress/:start", template.Browser.TransactionListQuery)
+		actBrowser.GET("/TransactionEx/Query/:page/:pageSize", template.Browser.TransactionExQuery)
+		actBrowser.GET("/blockMaxNum/query", template.Browser.QueryBlockMaxNumber)
+		actBrowser.GET("/block/query/:page/:pageSize", template.Browser.QueryBlockInfo)
+		actBrowser.GET("/block/info/query", template.Browser.QueryBlockInfoByBlockIdOrNum)
+		actBrowser.GET("/block/agent/query/:page/:pageSize", template.Browser.QueryBlockAgent)
+		actBrowser.GET("/statistic/transaction", template.Browser.StatisticsTransaction)
 	}
 
 	//act wallet http
