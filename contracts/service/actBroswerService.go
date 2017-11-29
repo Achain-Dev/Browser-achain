@@ -39,6 +39,7 @@ type ActServiceTemplate struct {
 }
 
 type ActBrowserService struct {
+
 }
 
 type UserBalanceVo struct {
@@ -53,6 +54,7 @@ func (_ *ActBrowserService) QueryBalanceByAddress(c *gin.Context) {
 	address := c.Param("address")
 	if address == "" {
 		common.WebResultFail(c)
+		return
 	}
 
 	list, err := models.ListByAddress(address)
@@ -60,6 +62,7 @@ func (_ *ActBrowserService) QueryBalanceByAddress(c *gin.Context) {
 	if err != nil {
 		log.Fatal("QueryBalanceByAddress|query data ERROR:", err)
 		common.WebResultFail(c)
+		return
 	}
 
 	userBalanceVoList := make([]UserBalanceVo, 0)
@@ -91,6 +94,7 @@ func (_ *ActBrowserService) QueryContractByKey(c *gin.Context) {
 	log.Printf("QueryContractByKey|page=%s|perPage=%s|keyword=%s\n", page, perPage, keyword)
 	if page < 1 || perPage < 1 {
 		common.WebResultFail(c)
+		return
 	}
 
 	queryType := 1
@@ -101,6 +105,7 @@ func (_ *ActBrowserService) QueryContractByKey(c *gin.Context) {
 	contractInfoPageVO, err := models.ListContractInfoByKey(keyword, models.Forever, page, perPage, queryType)
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 
 	contractInfoVOList := make([]models.ContractInfoVO, 0)
@@ -130,6 +135,7 @@ func (_ *ActBrowserService) QueryAddressInfo(c *gin.Context) {
 	userAddressList, err := models.ListByAddressAndCoinType(userActAddress, "ACT")
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 	var userAddressVO models.UserAddressVO
 
@@ -149,10 +155,12 @@ func (_ *ActBrowserService) TransactionListQuery(c *gin.Context) {
 	tbActTransactionList, err := models.TransactionListQuery(start, userActAddress, "ACT")
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 
 	if len(tbActTransactionList) == 0 {
 		common.WebResultMiss(c, 10002, "no more transactions")
+		return
 	}
 
 	actTransactionDTOList := make([]models.ActTransactionDTO, 0)
@@ -190,6 +198,7 @@ func (_ *ActBrowserService) TransactionExQuery(c *gin.Context) {
 	list, err := models.TransactionExQuery(originTrxId, page, pageSize)
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 	common.WebResultSuccess(list, c)
 }
@@ -204,6 +213,7 @@ func (_ *ActBrowserService) QueryBlockMaxNumber(c *gin.Context) {
 			panic(err.Error())
 			log.Fatal("QueryBlockMaxNumber|getBlockNum|error convert json string")
 			common.WebResultFail(c)
+			return
 		}
 		blockNum = resultJson.Get("result").MustInt64()
 	}
@@ -216,6 +226,7 @@ func (_ *ActBrowserService) QueryBlockInfo(c *gin.Context) {
 	actBlockPageVO, err := models.BlockQueryByPage("", page, pageSize)
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 	common.WebResultSuccess(actBlockPageVO, c)
 }
@@ -226,6 +237,7 @@ func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context) {
 
 	if blockId == "" && blockNum == "" {
 		common.WebResultMiss(c, 10007, "param missing")
+		return
 	}
 
 	var tbActBlock models.TbActBlock
@@ -243,6 +255,7 @@ func (_ *ActBrowserService) QueryBlockInfoByBlockIdOrNum(c *gin.Context) {
 
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 	resultMap := make(map[string]interface{}, 0)
 
@@ -270,10 +283,12 @@ func (_ *ActBrowserService) QueryBlockAgent(c *gin.Context) {
 
 	if page < 1 || pageSize < 1 {
 		common.WebResultFail(c)
+		return
 	}
 	actBlockPageVO, err := models.BlockQueryByPage(signee, page, pageSize)
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 
 	common.WebResultSuccess(actBlockPageVO, c)
@@ -283,6 +298,7 @@ func (_ *ActBrowserService) StatisticsTransaction(c *gin.Context) {
 	actStatisticsDto, err := models.StatisticsAllDataForQuery()
 	if err != nil {
 		common.WebResultFail(c)
+		return
 	}
 	common.WebResultSuccess(actStatisticsDto, c)
 }

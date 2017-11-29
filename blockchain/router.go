@@ -26,10 +26,15 @@ func InitRouter() {
 	}
 
 	//act wallet http
-	router.Group("/api/wallet/act")
+	actWallet := router.Group("/api/wallet/act")
 	{
+		broadcastTemplate := new(service.ActBroadcastTemplate)
+		broadcastTemplate.Broadcast = new(service.ActBroadcastService)
+		actWallet.POST("/network/broadcast/transaction",broadcastTemplate.Broadcast.NetworkBroadcastTransaction)
 
 	}
+
+
 
 	router.Run(":8381")
 }
