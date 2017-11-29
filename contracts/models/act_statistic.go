@@ -2,7 +2,6 @@ package models
 
 import (
 	"Browser-achain/contracts/dto"
-	"Browser-achain/contracts/service"
 	"encoding/json"
 	"fmt"
 )
@@ -18,7 +17,7 @@ type ActStatisticsDto struct {
 
 func StatisticsAllDataForQuery() (ActStatisticsDto, error) {
 	var actStatisticsDto ActStatisticsDto
-	dtoString, err := service.Get(dto.WALLET_STATISTICS_ALL_TASK)
+	dtoString, err := Get(dto.WALLET_STATISTICS_ALL_TASK)
 	if err != nil {
 		return actStatisticsDto, err
 	}
