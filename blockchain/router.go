@@ -3,6 +3,7 @@ package blockchain
 import (
 	"Browser-achain/contracts/service"
 	"github.com/gin-gonic/gin"
+
 )
 
 func InitRouter() {
@@ -31,6 +32,7 @@ func InitRouter() {
 		broadcastTemplate := new(service.ActBroadcastTemplate)
 		broadcastTemplate.Broadcast = new(service.ActBroadcastService)
 		actWallet.POST("/network/broadcast/transaction",broadcastTemplate.Broadcast.NetworkBroadcastTransaction)
+		actWallet.GET("/network/get/code",broadcastTemplate.Broadcast.NetworkGetCode)
 
 	}
 
