@@ -33,6 +33,7 @@ func InitRouter() {
 		broadcastTemplate.Broadcast = new(service.ActBroadcastService)
 		actWallet.POST("/network/broadcast/transaction",broadcastTemplate.Broadcast.NetworkBroadcastTransaction)
 		actWallet.GET("/network/get/code",broadcastTemplate.Broadcast.NetworkGetCode)
+		actWallet.POST("/network/broadcast/transactionWithCode",broadcastTemplate.Broadcast.NetworkBroadcastTransactionWithCode)
 
 	}
 
