@@ -3,7 +3,6 @@ package blockchain
 import (
 	"Browser-achain/contracts/service"
 	"github.com/gin-gonic/gin"
-
 )
 
 func InitRouter() {
@@ -18,7 +17,8 @@ func InitRouter() {
 		actBrowser.GET("/contract/query/:page/:perPage", template.Browser.QueryContractByKey)
 		actBrowser.GET("/getUserAddressBalance/:userAddress", template.Browser.QueryAddressInfo)
 		actBrowser.GET("/transactionQuery/:userAddress/:start", template.Browser.TransactionListQuery)
-		actBrowser.GET("/TransactionEx/Query/:page/:pageSize", template.Browser.TransactionExQuery)
+		actBrowser.GET("/transactionEx/query/:page/:pageSize", template.Browser.TransactionExQuery)
+		actBrowser.GET("transaction/query/:page/:pageSize", template.Browser.TransactionQuery)
 		actBrowser.GET("/blockMaxNum/query", template.Browser.QueryBlockMaxNumber)
 		actBrowser.GET("/block/query/:page/:pageSize", template.Browser.QueryBlockInfo)
 		actBrowser.GET("/block/info/query", template.Browser.QueryBlockInfoByBlockIdOrNum)
@@ -31,13 +31,11 @@ func InitRouter() {
 	{
 		broadcastTemplate := new(service.ActBroadcastTemplate)
 		broadcastTemplate.Broadcast = new(service.ActBroadcastService)
-		actWallet.POST("/network/broadcast/transaction",broadcastTemplate.Broadcast.NetworkBroadcastTransaction)
-		actWallet.GET("/network/get/code",broadcastTemplate.Broadcast.NetworkGetCode)
-		actWallet.POST("/network/broadcast/transactionWithCode",broadcastTemplate.Broadcast.NetworkBroadcastTransactionWithCode)
+		actWallet.POST("/network/broadcast/transaction", broadcastTemplate.Broadcast.NetworkBroadcastTransaction)
+		actWallet.GET("/network/get/code", broadcastTemplate.Broadcast.NetworkGetCode)
+		actWallet.POST("/network/broadcast/transactionWithCode", broadcastTemplate.Broadcast.NetworkBroadcastTransactionWithCode)
 
 	}
-
-
 
 	router.Run(":8381")
 }

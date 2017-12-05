@@ -22,6 +22,8 @@ type ActService interface {
 	TransactionListQuery(c *gin.Context)
 	// Query by origin trx id
 	TransactionExQuery(c *gin.Context)
+	// Query transaction list
+	TransactionQuery(c *gin.Context)
 	// Block max number query
 	QueryBlockMaxNumber(c *gin.Context)
 	// Query block info
@@ -39,7 +41,6 @@ type ActServiceTemplate struct {
 }
 
 type ActBrowserService struct {
-
 }
 
 type UserBalanceVo struct {
@@ -146,6 +147,17 @@ func (_ *ActBrowserService) QueryAddressInfo(c *gin.Context) {
 		userAddressVO.Address = *tbUserAddress.UserAddress
 	}
 	common.WebResultSuccess(userAddressVO, c)
+}
+
+func (_ *ActBrowserService) TransactionQuery(c *gin.Context) {
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+	transactionPage, err := models.TransactionListQueryByBlock(uint64(0), "", page, pageSize)
+	if err != nil {
+		common.WebResultFail(c)
+		return
+	}
+	common.WebResultSuccess(transactionPage, c)
 }
 
 func (_ *ActBrowserService) TransactionListQuery(c *gin.Context) {
