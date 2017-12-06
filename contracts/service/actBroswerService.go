@@ -24,6 +24,8 @@ type ActService interface {
 	TransactionExQuery(c *gin.Context)
 	// Query transaction list
 	TransactionQuery(c *gin.Context)
+	// Query transaction details based on single number
+	TransactionInfoQuery(c *gin.Context)
 	// Block max number query
 	QueryBlockMaxNumber(c *gin.Context)
 	// Query block info
@@ -203,6 +205,50 @@ func (_ *ActBrowserService) TransactionListQuery(c *gin.Context) {
 	common.WebResultSuccessWithMap(c, data)
 }
 
+func (_ *ActBrowserService) TransactionInfoQuery(c *gin.Context) {
+	page, _ := strconv.Atoi(c.Param("page"))
+	pageSize, _ := strconv.Atoi(c.Param("pageSize"))
+	trxId := c.Param("trxId")
+	transaction, err := models.TransactionQueryByTrxId(trxId)
+	if err != nil {
+		common.WebResultFail(c)
+		return
+	}
+	resultMap := make(map[string]interface{}, 17)
+	if transaction != nil {
+		resultMap["from_acct"] = transaction.FromAcct
+		resultMap["from_addr"] = transaction.FromAddr
+		resultMap["trx_type"] = transaction.TrxType
+		resultMap["trx_time"] = transaction.TrxTime
+		fee := int64(transaction.Fee)
+		resultMap["fee"] = util.GetActualAmount(&fee)
+		resultMap["from_acct"] = transaction.FromAcct
+		resultMap["called_abi"] = transaction.CalledAbi
+		resultMap["to_acct"] = transaction.ToAcct
+		resultMap["to_addr"] = transaction.ToAddr
+		resultMap["amount"] = util.GetActualAmount(transaction.Amount)
+		resultMap["block_num"] = transaction.BlockNum
+		resultMap["memo"] = transaction.Memo
+		resultMap["abi_params"] = transaction.AbiParams
+		resultMap["contract_id"] = transaction.ContractId
+		resultMap["event_type"] = transaction.EventType
+		resultMap["event_params"] = transaction.EventParam
+		if transaction.CoinType != nil && *transaction.CoinType != "" && len(*transaction.CoinType) > 6 {
+			resultMap["coin_type"] = ""
+		} else {
+			resultMap["coin_type"] = *transaction.CoinType
+		}
+
+		if transaction.ExtraTrxId != nil && *transaction.ExtraTrxId != "" {
+			transactionExPage, _ := models.TransactionExQueryByTrxId(*transaction.ExtraTrxId, page, pageSize)
+			resultMap["ActTransactionExs"] = transactionExPage
+		}
+
+	}
+	common.WebResultSuccess(resultMap, c)
+
+}
+
 func (_ *ActBrowserService) TransactionExQuery(c *gin.Context) {
 	originTrxId := c.DefaultQuery("originTrxId", "")
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -216,7 +262,7 @@ func (_ *ActBrowserService) TransactionExQuery(c *gin.Context) {
 }
 
 func (_ *ActBrowserService) QueryBlockMaxNumber(c *gin.Context) {
-	var params = []string{}
+	var params []string
 	result := util.Post(common.WALLET_RPC, common.WALLET_NAME_PASSWORD, "blockchain_get_block_count", params)
 	var blockNum = int64(0)
 	if result != "" {

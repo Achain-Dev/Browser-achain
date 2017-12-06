@@ -19,6 +19,7 @@ func InitRouter() {
 		actBrowser.GET("/transactionQuery/:userAddress/:start", template.Browser.TransactionListQuery)
 		actBrowser.GET("/transactionEx/query/:page/:pageSize", template.Browser.TransactionExQuery)
 		actBrowser.GET("transaction/query/:page/:pageSize", template.Browser.TransactionQuery)
+		actBrowser.GET("/transaction/info/query/:page/:pageSize/:trxId", template.Browser.TransactionInfoQuery)
 		actBrowser.GET("/blockMaxNum/query", template.Browser.QueryBlockMaxNumber)
 		actBrowser.GET("/block/query/:page/:pageSize", template.Browser.QueryBlockInfo)
 		actBrowser.GET("/block/info/query", template.Browser.QueryBlockInfoByBlockIdOrNum)

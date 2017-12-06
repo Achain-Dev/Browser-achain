@@ -98,6 +98,34 @@ func TransactionListQuery(start int64, userAddress, coinType string) ([]TbActTra
 	return mappingDataToTransactionList(rows)
 }
 
+func TransactionQueryByTrxId(trxId string) (*TbActTransaction, error) {
+	db, err := common.GetDbConnection()
+
+	defer db.Close()
+
+	if err != nil {
+		log.Fatal("TransactionQueryByTrxId|ERROR:", err)
+		panic(err.Error())
+		return nil, err
+	}
+
+	rows, err := db.Query("SELECT * FROM tb_act_transaction WHERE trx_id = ? LIMIT 1", trxId)
+
+	if err != nil {
+		log.Fatal("TransactionQueryByTrxId|ERROR:", err)
+		panic(err.Error())
+		return nil, err
+	}
+
+	tbTransactionList, _ := mappingDataToTransactionList(rows)
+
+	if len(tbTransactionList) == 0 {
+		return nil, nil
+	}
+	return &tbTransactionList[0], nil
+
+}
+
 // Query transaction by
 func TransactionListQueryByBlock(blockNum uint64, acctAddress string, page, pageSize int) (ActTransactionPage, error) {
 	db, err := common.GetDbConnection()
@@ -213,14 +241,4 @@ func mappingDataToTransactionList(rows *sql.Rows) ([]TbActTransaction, error) {
 
 	}
 	return tbActTransactionList, nil
-}
-
-func countNumber(countRows *sql.Rows) int {
-	count := 0
-	for countRows.Next() {
-		countRows.Scan(
-			&count,
-		)
-	}
-	return count
 }
